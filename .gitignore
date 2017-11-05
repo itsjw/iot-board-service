@@ -1,6 +1,9 @@
 /dist
-/logs
-/npm-debug.log
+/lib
 /node_modules
-.DS_Store
+/coverage
+
+# IntelliJ Project Files
+/.idea
+*.iml
 /nbproject/private/

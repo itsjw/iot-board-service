@@ -4,6 +4,13 @@ export default ({ config, db }) => resource({
 	
 	/** GET /:id - Return a given entity */
 	index({ params }, res) {
-		res.json(Math.floor(Math.random() * 100));
+        
+            setTimeout(() => {
+                let value = Math.floor(Math.random() * 100);
+                let x = Math.floor(new Date().getTime() / 1000) - 1509515855;
+
+                res.json({x: x, value: 10});
+            }, 300);
+                     
 	}
 });
