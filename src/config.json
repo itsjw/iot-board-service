@@ -1,5 +1,6 @@
 {
-	"port": 8000,
-	"bodyLimit": "100kb",
-	"corsHeaders": ["Link"]
+    "port": 8000,
+    "bodyLimit": "100kb",
+    "corsHeaders": ["Link"],
+    "apiEndpoint": "https://q5pm6zy6bj.execute-api.us-west-2.amazonaws.com/prod/mockerdb"
 }
