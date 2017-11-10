@@ -21,7 +21,16 @@ function DeviceDetail(body) {
         let lastReading = body.lastReading[field];
         this.sensors.push(new SensorDetail(field, type, lastReading));
     });
-
+    
+    this.getSensorValue = (field) => {
+        for(let i = 0; i < this.sensors.length; i++) {
+            if(this.sensors[i].field === field) {
+                return this.sensors[i].lastReading;
+            }
+        }
+        
+        return undefined;
+    };
 }
 
 function RoomDetail(name) {
@@ -30,6 +39,14 @@ function RoomDetail(name) {
 
     this.appendDevice = (device) => {
         this.devices.push(device);
+    };
+    
+    this.getDevice = (deviceId) => {
+        let dev = this.devices.find((d) => {
+            return (d.id === deviceId);
+        });
+        
+        return dev;
     };
 }
 
@@ -59,6 +76,19 @@ function getRoomDetails(body) {
     return roomSet;
 }
 
+function findDevice(roomSet, deviceId) {
+    let device = null;
+    
+    for(let i = 0; i < roomSet.length; i++) {
+        let device = roomSet[i].getDevice(deviceId);
+        
+        if(device !== null)
+            return device;
+    }
+    
+    return null;
+}
+
 export default function (config) {
     this.queuryRooms = function (userId) {
         return new Promise((resolve, reject) => {
@@ -69,5 +99,17 @@ export default function (config) {
                 reject();
             });
         });
+    };
+    
+    this.queryDevice = function(userId, deviceId) {
+        return new Promise((resolve, reject) => {
+            axios.get(config.apiEndpoint + '/things/' + userId).then(function (response) {
+                let roomDetails = getRoomDetails(response.data.body);
+                let device = findDevice(roomDetails, deviceId);
+                resolve(device);
+            }).catch((err) => {
+                reject(err);
+            });
+        });        
     };
 }
