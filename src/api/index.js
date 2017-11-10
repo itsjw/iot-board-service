@@ -2,7 +2,7 @@ import { version } from '../../package.json';
 import { Router } from 'express';
 import facets from './facets';
 import auth from './auth';
-import random from './random';
+import device from './device';
 import home from './home';
 
 export default ({ config, db }) => {
@@ -14,7 +14,7 @@ export default ({ config, db }) => {
 	// mount the auth resource
 	api.use('/auth', auth({ config, db }));
 
-	api.use('/random', random({ config, db }));
+	api.use('/device', device({ config, db }));
         
 	api.use('/home', home({ config, db }));
         
