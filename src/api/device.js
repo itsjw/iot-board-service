@@ -14,7 +14,8 @@ export default ({ config, db }) => resource({
         read( { device }, res) {
             new HomeModel(config).queryDevice(device.userId, device.deviceId).then((response) => {
                 
-                res.json(response.getSensorValue(device.sensor));
+                let result = device.sensor === undefined ? response.getSensorValues() : response.getSensorValue(device.sensor);
+                res.json(result);
             }).catch((err) => {
                 res.json({isError: true, errorDescription: err.toString()});
             });

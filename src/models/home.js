@@ -31,6 +31,16 @@ function DeviceDetail(body) {
         
         return undefined;
     };
+    
+    this.getSensorValues = () => {
+        let sensorValues = {};
+        
+        this.sensors.forEach((s) => {
+            sensorValues[s.field] = s.lastReading;
+        });
+        
+        return sensorValues;
+    };
 }
 
 function RoomDetail(name) {
