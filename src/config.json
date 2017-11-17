@@ -2,5 +2,6 @@
     "port": 8000,
     "bodyLimit": "100kb",
     "corsHeaders": ["Link"],
-    "apiEndpoint": "https://q5pm6zy6bj.execute-api.us-west-2.amazonaws.com/prod/mockerdb"
+    "apiEndpoint": "https://q5pm6zy6bj.execute-api.us-west-2.amazonaws.com/prod/mockerdb",
+    "database": "mongodb://root:root@ds111476.mlab.com:11476/iotboard"
 }
