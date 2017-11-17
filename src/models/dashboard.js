@@ -1,0 +1,33 @@
+var Promise = require('promise');
+
+var axios = require("axios");
+
+export default function (db) {
+    var DEFAULT_DOCUMENT = {"widgets":{"initial_chart":{"id":"initial_chart","type":"chart","settings":{"name":"Random Values","datasource":"initial_random_source","chartType":"area-spline","dataKeys":"[\"value\"]","xKey":"x","names":"{\"value\": \"My Value\"}","gaugeData":"{\"min\":0,\"max\":100,\"units\":\" %\"}"},"row":0,"col":0,"width":6,"height":2,"availableHeightPx":175},"initial_text":{"id":"initial_text","type":"text","settings":{"name":"Random data","datasource":"initial_random_source"},"row":0,"col":6,"width":6,"height":3,"availableHeightPx":285},"106913f4-44fb-4f69-ab89-5d5ae857cf3c":{"id":"106913f4-44fb-4f69-ab89-5d5ae857cf3c","type":"chart","settings":{"name":"Random Values","datasource":"initial_random_source","chartType":"spline","dataKeys":"[\"value\", \"value2\"]","xKey":"x","names":"{\"value\": \"My Value\"}","gaugeData":"{\"min\":0,\"max\":100,\"units\":\" %\"}"},"row":2,"col":0,"width":6,"height":2,"availableHeightPx":175}},"datasources":{"initial_random_source":{"id":"initial_random_source","type":"random","settings":{"name":"Random","min":10,"max":20,"maxValues":20},"isLoading":false}},"datasourcePlugins":{"random":{"id":"random","url":"./plugins/datasources/randomDatasource.js","typeInfo":{"type":"random","name":"Random","version":"0.0.1","author":"Lobaro","kind":"datasource","description":"A datasource that provides a random value each tick","settings":[{"id":"min","name":"Min Value","type":"number","defaultValue":0},{"id":"max","name":"Max Value","type":"number","defaultValue":100}]},"isLoading":false},"time":{"id":"time","url":"./plugins/datasources/timeDatasource.js","typeInfo":{"type":"time","name":"Time","version":"0.0.1","author":"Lobaro","kind":"datasource"},"isLoading":false},"static-data":{"id":"static-data","url":"./plugins/datasources/staticData.js","typeInfo":{"type":"static-data","name":"Static Data","version":"0.0.1","author":"Lobaro","kind":"datasource","description":"Datasource that provides static data","settings":[{"id":"data","name":"Data","description":"The data that is returned by the datasource, must be an json-array of json-objects","type":"json","defaultValue":"[]"}]},"isLoading":false},"digimondo-firefly-datasource":{"id":"digimondo-firefly-datasource","url":"./plugins/datasources/digimondoFirefly.js","typeInfo":{"type":"digimondo-firefly-datasource","name":"Digimondo Firefly","version":"0.0.1","author":"Lobaro","kind":"datasource","description":"Fetch parsed data from the Digimondo API","dependencies":["https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"],"settings":[{"id":"auth","name":"Auth Token","description":"Digimondo Authentication Token (Secret API Key)","defaultValue":"","required":true,"type":"string"},{"id":"deviceEui","name":"Filter Device EUI","description":"Only parse data from given Device EUI","defaultValue":"","type":"string"},{"id":"limitToLast","name":"Limit","description":"The amount Packets to be returned. Ordered by creation date, descending (unless otherwise specified through the direction parameter). Default value is 1 Maximum value is 100.","defaultValue":0,"type":"number"},{"id":"offset","name":"Offset","description":"The amount of most recent Packets to skip before returning Packets. Default value is 0.","defaultValue":0,"type":"number"},{"id":"direction","name":"Direction","description":"When set to asc, it will return the oldest Packets first. When set to desc, it will return the most recent packets. Default is desc.","defaultValue":"","type":"string"},{"id":"fetchInterval","name":"Fetch Interval","description":"How ofter should data be fetched in ms","defaultValue":"1000","type":"number"},{"id":"baseUrl","name":"Base Url (trailing slash)","description":"Digimondo API Base Url","defaultValue":"http://firefly.lobaro.com/api/v1/","required":true,"type":"string"}]},"isLoading":false}},"widgetPlugins":{"chart":{"id":"chart","url":"./plugins/widgets/chartWidget.js","typeInfo":{"type":"chart","name":"Chart","version":"0.0.2","author":"Lobaro","kind":"widget","description":"Renders a chart.","dependencies":["https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js","https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js","https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css"],"settings":[{"id":"datasource","name":"Datasource","type":"datasource"},{"id":"chartType","name":"Chart Type","type":"option","defaultValue":"spline","options":["line","spline","step","area","area-spline","area-step","bar","scatter","pie","donut","gauge"]},{"id":"dataKeys","type":"json","name":"Data Keys","description":"An array of Keys of an data object that define the data sets","defaultValue":"[\"value\"]"},{"id":"xKey","type":"string","name":"X Key","description":"Key of an data object that defines the X value","defaultValue":"x"},{"id":"names","type":"json","name":"Data Names","description":"Json object that maps Data Keys to displayed names","defaultValue":"{\"value\": \"My Value\"}"},{"id":"gaugeData","type":"json","name":"Gauge Data","description":"Json object that is passed as configuration for gauge chats","defaultValue":"{\"min\":0,\"max\":100,\"units\":\" %\"}"}]},"isLoading":false},"text":{"id":"text","url":"./plugins/widgets/textWidget.js","typeInfo":{"type":"text","name":"Text","version":"0.0.1","author":"Lobaro","kind":"widget","description":"Display content of a datasource as plain text","settings":[{"id":"datasource","name":"Datasource","type":"datasource","description":"Datasource to get the text"}]},"isLoading":false}}};
+    
+    this.getDashboard = function (userId) {
+        return new Promise((resolve, reject) => {
+            let query = {userId: userId};
+            let result = db.collection("layouts").findOne(query, {dashboard: true}, (err, result) => {
+                if (err)
+                    reject(err);
+            
+                resolve(result === null ? DEFAULT_DOCUMENT : result.dashboard);
+            });
+        });
+    };
+
+    this.saveDashboard = function (userId, layout) {
+        
+        return new Promise((resolve, reject) => {
+            db.collection("layouts").updateOne({userId: userId}, {$set:{dashboard: layout }}, {upsert: true}, (err, result) => {
+                if (err)
+                    reject(err);
+            
+                resolve(true);
+            });
+        
+        });
+
+    }
+}
