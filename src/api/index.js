@@ -4,6 +4,7 @@ import facets from './facets';
 import auth from './auth';
 import device from './device';
 import home from './home';
+import dashboard from './dashboard';
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -17,6 +18,8 @@ export default ({ config, db }) => {
 	api.use('/device', device({ config, db }));
         
 	api.use('/home', home({ config, db }));
+        
+	api.use('/dashboard', dashboard({ config, db }));
         
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {
