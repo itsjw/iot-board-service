@@ -1,4 +1,10 @@
-export default callback => {
-	// connect to a database if needed, then pass it to `callback`:
-	callback();
+var MongoClient = require('mongodb').MongoClient;
+
+export default (config, callback) => {
+    MongoClient.connect(config.database, (err, db) => {
+        if (err)
+            throw err;
+
+        callback(db);
+    });
 }
