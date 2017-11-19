@@ -13,6 +13,8 @@ function DeviceDetail(body) {
     this.ecosys = body.ecosys;
     this.name = body.name;
 
+    this.typesSensor = body.typesSensor;
+
     this.sensors = Array();
 
     body.sensors.forEach((e) => {
@@ -60,50 +62,33 @@ function RoomDetail(name) {
     };
 }
 
-function getRoomDetails(body) {
-    var rooms = new Map();
+function getDeviceDetails(body) {
+    var devices = new Array();
 
     body.forEach((b) => {
-
-        var room = rooms.get(b.room);
-
-        if (room === undefined) {
-            room = new RoomDetail(b.room);
-            rooms.set(b.room, room);
-        }
-
         let device = new DeviceDetail(b);
 
-        room.appendDevice(device);
+        devices.push(device);
     });
 
-    var roomSet = Array();
-
-    rooms.forEach((value, key) => {
-        roomSet.push(value);
-    });
-
-    return roomSet;
+    return devices;
 }
 
-function findDevice(roomSet, deviceId) {
-    let device = null;
+function findDevice(deviceSet, deviceId) {
     
-    for(let i = 0; i < roomSet.length; i++) {
-        let device = roomSet[i].getDevice(deviceId);
-        
-        if(device !== null)
-            return device;
+    for(let i = 0; i < deviceSet.length; i++) {
+        if(deviceId === deviceSet[i].id)
+            return deviceSet[i];
     }
     
     return null;
 }
 
 export default function (config) {
-    this.queuryRooms = function (userId) {
+    this.queuryDevices = function (userId) {
         return new Promise((resolve, reject) => {
             axios.get(config.apiEndpoint + '/things/' + userId).then(function (response) {
-                resolve(getRoomDetails(response.data.body));
+                resolve(getDeviceDetails(response.data.body));
             }).catch((err) => {
                 throw err;
                 reject();
@@ -114,12 +99,12 @@ export default function (config) {
     this.queryDevice = function(userId, deviceId) {
         return new Promise((resolve, reject) => {
             axios.get(config.apiEndpoint + '/things/' + userId).then(function (response) {
-                let roomDetails = getRoomDetails(response.data.body);
+                let roomDetails = getDeviceDetails(response.data.body);
                 let device = findDevice(roomDetails, deviceId);
                 resolve(device);
             }).catch((err) => {
                 reject(err);
             });
-        });        
+        });
     };
 }
