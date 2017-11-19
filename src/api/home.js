@@ -12,7 +12,7 @@ export default ({ config, db }) => resource({
         },
 
         read( { user }, res) {
-            new HomeModel(config).queuryRooms(user).then((response) => {
+            new HomeModel(config).queuryDevices(user).then((response) => {
                 res.json(response);
             }).catch((err) => {
                 res.json({isError: true, errorDescription: err.toString()});
